@@ -149,17 +149,21 @@ void BeachLineBST::RemoveArc(Event * cEvent, EventPQ * eventPQ, float directrixY
 	leftEdge->start = new Vertex(leftBreakPt->ray.orig);
 	leftEdge->end = vertex;
 
+	//position2D dirTest = normalize({leftBreakPt->ray.orig.x - vertex->pos.x, leftBreakPt->ray.orig.y - vertex->pos.y});
+
+	//assert(dirTest.x == leftBreakPt->ray.dir.x && dirTest.y == leftBreakPt->ray.dir.y);
+
 	Edge *rightEdge = new Edge();
 	rightEdge->start = new Vertex(rightBreakPt->ray.orig);
 	rightEdge->end = vertex;
 
 	if (leftBreakPt->ray.isMaxY)
 	{
-		leftEdge->start->pos.y = FLT_MAX;
+		leftEdge->start->pos.y = 1000.0f;
 	}
 	if (rightBreakPt->ray.isMaxY)
 	{
-		rightEdge->start->pos.y = FLT_MAX;
+		rightEdge->start->pos.y = 1000.0f;
 	}
 
 	//TODO::Fixing Dual
@@ -415,6 +419,21 @@ void BeachLineBST::CheckAndAddCircleEvent(BeachLineBSTNode * item, EventPQ * eve
 
 		float radius = magnitude({ intersectionPt.x - item->site->pos.x, intersectionPt.y - item->site->pos.y });
 		float circleEventY = intersectionPt.y - radius;
+		////New Code
+		//if(circleEventY > directrixY)
+		//	return;
+		////New
+
+		////New 2
+		//if (item->cEvent != nullptr)
+		//{
+		//	if (item->cEvent->point->pos.y >= circleEventY)
+		//	{
+		//		return;
+		//	}
+		//}
+		////New 2
+
 		assert(isfinite(circleEventY));
 		Event* cEvent = new Event(new Vertex({ intersectionPt.x, circleEventY }), item, intersectionPt);
 		eventPQ->push(cEvent);
@@ -668,7 +687,7 @@ float GetArcYForXCoord(Vertex* site, float x, float directrixY)
 bool CheckRayIntersection(HalfEdge &rayA, HalfEdge &rayB, position2D &pos)
 {
 	position2D as = rayA.orig;
-	position2D ad = { rayA.dir.x, rayB.dir.y };
+	position2D ad = { rayA.dir.x, rayA.dir.y };
 	position2D bs = rayB.orig;
 	position2D bd = { rayB.dir.x, rayB.dir.y };
 

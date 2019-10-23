@@ -1,5 +1,0 @@
-﻿  main.cpp
-f:\workspace\raylib\raylibsolution\voronoidiagram\main.cpp(80): warning C4018: '<': signed/unsigned mismatch
-f:\workspace\raylib\raylibsolution\voronoidiagram\main.cpp(85): warning C4018: '<': signed/unsigned mismatch
-f:\workspace\raylib\raylibsolution\voronoidiagram\main.cpp(90): warning C4018: '<': signed/unsigned mismatch
-  VoronoiDiagram.vcxproj -> F:\Workspace\Raylib\RayLibSolution\Debug\VoronoiDiagram.exe

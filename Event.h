@@ -1,5 +1,6 @@
 #pragma once
 #include "util.h"
+
 #include <limits.h>
 
 enum class EventType

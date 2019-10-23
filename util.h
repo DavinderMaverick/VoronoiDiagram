@@ -1,4 +1,5 @@
 #pragma once
+
 #include <math.h>
 #include <ostream>
 
@@ -61,17 +62,17 @@ struct Edge
 {
 	Vertex *start;
 	Vertex *end;
-
+/*
 	Vertex *lSite;
-	Vertex *rSite;
+	Vertex *rSite;*/
 };
 
 struct HalfEdge
 {
 	position2D orig;
 	Direction dir;
-	HalfEdge *dual; //Some edges need to be completed
-	Vertex *lSite;
+	//HalfEdge *dual; //Some edges need to be completed
+	//Vertex *lSite;
 	bool isMaxY;//To avoid precision issues otherwise we can set orig y to max y coord available but then when checking for this special case there will be precision issues, it's best to avoid precision issues
 	HalfEdge() : isMaxY(false) {}
 };

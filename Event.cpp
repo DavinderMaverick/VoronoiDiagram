@@ -21,10 +21,14 @@ Event::~Event()
 
 bool Event::lessThan(const Event *a, const Event *b)
 {
+	if (a->point->pos.y == b->point->pos.y)
+		return a->point->pos.x > b->point->pos.x;
 	return a->point->pos.y < b->point->pos.y;
 }
 
 bool Event::greaterThan(const Event *a, const Event *b)
 {
+	if (a->point->pos.y == b->point->pos.y)
+		return a->point->pos.x < b->point->pos.x;
 	return a->point->pos.y > b->point->pos.y;
 }

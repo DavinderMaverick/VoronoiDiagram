@@ -51,7 +51,7 @@ VoronoiOutput Voronoi::generateVoronoi(std::vector<position2D>& sitePositions, f
 		BeachLineBSTNode* arcAbove = (beachLine->root->isLeaf) ? beachLine->root : beachLine->GetArcByX2(event->point->pos.x, sweepLineY);
 
 		HalfEdge ray;
-		ray.orig = { (newArc->site->pos.x + arcAbove->site->pos.x) / 2, FLT_MAX };
+		ray.orig = { (newArc->site->pos.x + arcAbove->site->pos.x) / 2, 1000.0f };
 		ray.dir = { 0.0f, -1.0f };
 		ray.isMaxY = true;
 
@@ -94,6 +94,8 @@ VoronoiOutput Voronoi::generateVoronoi(std::vector<position2D>& sitePositions, f
 			}
 		}
 	}
+
+	beachLine->print2D(sweepLineY);
 
 	//Handle the rest of events
 	while (!eventPQ->isEmpty())

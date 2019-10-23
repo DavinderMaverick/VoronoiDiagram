@@ -3,6 +3,7 @@
 #include "Event.h"
 #include "EventPQ.h"
 #include "BeachLineBSTNode.h"
+
 #include <iostream>
 #include <math.h>
 #include <algorithm>
@@ -10,7 +11,6 @@
 
 class BeachLineBST
 {
-	//Helper Functions, root can change
 public:
 
 	BeachLineBSTNode* root;
@@ -73,3 +73,5 @@ float GetArcYForXCoord(Vertex* site, float x, float directrixY);
 //rays == half edges == edges currently being traced out by beach line
 //https://stackoverflow.com/a/2932601
 bool CheckRayIntersection(HalfEdge &rayA, HalfEdge &rayB, position2D &pos);
+
+bool CheckRayIntersection2(HalfEdge &e1, HalfEdge &e2, position2D &pos);

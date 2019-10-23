@@ -72,7 +72,7 @@ void EventPQ::pop()
 
 void EventPQ::deleteEvent(Event* event)
 {
-	event->point->pos.y = FLT_MAX;
+	event->point->pos.y = 1000.0f;
 	bubbleUp(event->pqIndex);
 	pop();
 }
