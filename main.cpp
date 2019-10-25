@@ -1,3 +1,7 @@
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #include "Voronoi.h"
 
 #include <raylib.h>
@@ -37,8 +41,8 @@ int main(int argc, char* argv[])
 {
 	std::vector<position2D> sites;
 
+	int testCase = 32;
 
-	int testCase = 31;
 	switch (testCase)
 	{
 	case 0:
@@ -92,6 +96,7 @@ int main(int argc, char* argv[])
 		sites.push_back({ 300, 300 });
 		sites.push_back({ 200, 300 });
 		sites.push_back({ 400, 300 });
+		sites.push_back({ 500, 300 });
 		break;
 
 	case 4:
@@ -172,6 +177,17 @@ int main(int argc, char* argv[])
 	//--------------------------------------------------------------------------------------   
 	CloseWindow();        // Close window and OpenGL context
 	//--------------------------------------------------------------------------------------
+
+	//Clean Up Memory
+	out.MemoryCleanUp();
+	delete vor;
+
+	if (_CrtDumpMemoryLeaks()) {
+		std::cout << "Memory leaks!\n";
+	}
+	else {
+		std::cout << "No leaks\n";
+	}
 
 	return 0;
 }

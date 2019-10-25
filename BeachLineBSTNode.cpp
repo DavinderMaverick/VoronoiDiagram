@@ -45,3 +45,26 @@ void BeachLineBSTNode::SetParent(BeachLineBSTNode *item, bool left)
 BeachLineBSTNode::~BeachLineBSTNode()
 {
 }
+
+BeachLineBSTNode* CreateArcItem(Vertex* site, Event* cEvent)
+{
+	BeachLineBSTNode* arc = new BeachLineBSTNode();
+
+	arc->isLeaf = true;
+	arc->site = site;
+	arc->cEvent = cEvent;
+
+	return arc;
+}
+
+BeachLineBSTNode* CreateBreakPointItem(Vertex* lSite, Vertex* rSite, HalfEdge& ray)
+{
+	BeachLineBSTNode* breakPt = new BeachLineBSTNode();
+
+	breakPt->isLeaf = false;
+	breakPt->lSite = lSite;
+	breakPt->rSite = rSite;
+	breakPt->ray = ray;
+
+	return breakPt;
+}

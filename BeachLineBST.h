@@ -11,6 +11,11 @@
 
 class BeachLineBST
 {
+	//When there are 2 or more sites with same Y coord as the first site event, then special code is needed because there is no arc above the second site yet.
+	//This variable is used in such cases
+	float firstEventY;
+	std::vector <Vertex *> untrackedVertices;
+
 public:
 
 	BeachLineBSTNode* root;
@@ -48,10 +53,6 @@ public:
 	~BeachLineBST();
 };
 
-BeachLineBSTNode* CreateArcItem(Vertex* site, Event* cEvent = nullptr);
-
-BeachLineBSTNode* CreateBreakPointItem(Vertex* lSite, Vertex* rSite, HalfEdge& ray);
-
 //Useful when we need to find left and right arcs and check for circle events and also in case of deleting events
 //What is the arc immediately to the left of curr arc in the beachline sequence
 BeachLineBSTNode* GetLeftArc(BeachLineBSTNode* curr);
@@ -73,5 +74,3 @@ float GetArcYForXCoord(Vertex* site, float x, float directrixY);
 //rays == half edges == edges currently being traced out by beach line
 //https://stackoverflow.com/a/2932601
 bool CheckRayIntersection(HalfEdge &rayA, HalfEdge &rayB, position2D &pos);
-
-bool CheckRayIntersection2(HalfEdge &e1, HalfEdge &e2, position2D &pos);

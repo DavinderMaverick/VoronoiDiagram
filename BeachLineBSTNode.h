@@ -36,3 +36,7 @@ public:
 
 	~BeachLineBSTNode();
 };
+
+BeachLineBSTNode* CreateArcItem(Vertex* site, Event* cEvent = nullptr);
+
+BeachLineBSTNode* CreateBreakPointItem(Vertex* lSite, Vertex* rSite, HalfEdge& ray);

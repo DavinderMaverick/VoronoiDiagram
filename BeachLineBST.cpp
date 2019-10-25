@@ -1,35 +1,74 @@
 #include "BeachLineBST.h"
 #define COUNT 10
 
-BeachLineBSTNode* CreateArcItem(Vertex* site, Event* cEvent)
-{
-	BeachLineBSTNode* arc = new BeachLineBSTNode();
-
-	arc->isLeaf = true;
-	arc->site = site;
-	arc->cEvent = cEvent;
-
-	return arc;
-}
-
-BeachLineBSTNode* CreateBreakPointItem(Vertex* lSite, Vertex* rSite, HalfEdge& ray)
-{
-	BeachLineBSTNode* breakPt = new BeachLineBSTNode();
-
-	breakPt->isLeaf = false;
-	breakPt->lSite = lSite;
-	breakPt->rSite = rSite;
-	breakPt->ray = ray;
-
-	return breakPt;
-}
-
 BeachLineBST::BeachLineBST()
 {
 }
 
 void BeachLineBST::InsertArc(Vertex * s, EventPQ * eventPQ, float directrixY)
 {
+	//Inserting First Item in Tree
+	if (!root)
+	{
+		firstEventY = s->pos.y;
+		root = CreateArcItem(s);
+		return;
+	}
+
+	//Sites in close proximity to first when the first one is degerate line
+	if(firstEventY - s->pos.y < 1.0f)
+	{
+		BeachLineBSTNode* newArc = CreateArcItem(s);
+
+		BeachLineBSTNode* arcAbove = (root->isLeaf) ? root : GetArcByX2(s->pos.x, directrixY);
+
+		HalfEdge ray;
+
+		ray.orig = { (newArc->site->pos.x + arcAbove->site->pos.x) / 2, 1000.0f };
+		ray.dir = { 0.0f, -1.0f };
+		ray.isMaxY = true;
+
+		if (arcAbove->GetParent() == nullptr)
+		{
+			//Directly Root will be affected
+			//Compare x
+			if (arcAbove->site->pos.x <= newArc->site->pos.x)
+			{
+				BeachLineBSTNode* newBreakPt = CreateBreakPointItem(arcAbove->site, newArc->site, ray);
+				root = newBreakPt;
+				newBreakPt->SetLeftChild(arcAbove);
+				newBreakPt->SetRightChild(newArc);
+			}
+			else
+			{
+				BeachLineBSTNode* newBreakPt = CreateBreakPointItem(newArc->site, arcAbove->site, ray);
+				root = newBreakPt;
+				newBreakPt->SetLeftChild(newArc);
+				newBreakPt->SetRightChild(arcAbove);
+			}
+		}
+		else
+		{
+			if (arcAbove->site->pos.x <= newArc->site->pos.x)
+			{
+				BeachLineBSTNode* newBreakPt = CreateBreakPointItem(arcAbove->site, newArc->site, ray);
+				bool left = (arcAbove->GetParent()->GetLeftChild() == arcAbove) ? true : false;
+				newBreakPt->SetParent(arcAbove->GetParent(), left);
+				newBreakPt->SetLeftChild(arcAbove);
+				newBreakPt->SetRightChild(newArc);
+			}
+			else
+			{
+				BeachLineBSTNode* newBreakPt = CreateBreakPointItem(newArc->site, arcAbove->site, ray);
+				bool left = (arcAbove->GetParent()->GetLeftChild() == arcAbove) ? true : false;
+				newBreakPt->SetParent(arcAbove->GetParent(), left);
+				newBreakPt->SetLeftChild(newArc);
+				newBreakPt->SetRightChild(arcAbove);
+			}
+		}
+		return;
+	}
+
 	position2D t = s->pos;
 
 	//BeachLineBSTNode* arcToReplace = GetArcByX(t.x, directrixY);
@@ -147,6 +186,7 @@ void BeachLineBST::RemoveArc(Event * cEvent, EventPQ * eventPQ, float directrixY
 
 	Edge *leftEdge = new Edge();
 	leftEdge->start = new Vertex(leftBreakPt->ray.orig);
+	untrackedVertices.push_back(leftEdge->start);
 	leftEdge->end = vertex;
 
 	//position2D dirTest = normalize({leftBreakPt->ray.orig.x - vertex->pos.x, leftBreakPt->ray.orig.y - vertex->pos.y});
@@ -155,6 +195,7 @@ void BeachLineBST::RemoveArc(Event * cEvent, EventPQ * eventPQ, float directrixY
 
 	Edge *rightEdge = new Edge();
 	rightEdge->start = new Vertex(rightBreakPt->ray.orig);
+	untrackedVertices.push_back(rightEdge->start);
 	rightEdge->end = vertex;
 
 	if (leftBreakPt->ray.isMaxY)
@@ -533,6 +574,10 @@ void BeachLineBST::print2D(float directrixY)
 
 BeachLineBST::~BeachLineBST()
 {
+	for (auto &v : untrackedVertices)
+	{
+		delete v;
+	}
 }
 
 BeachLineBSTNode* GetLeftArc(BeachLineBSTNode* curr)

@@ -17,6 +17,8 @@ Event::Event(Vertex* point, BeachLineBSTNode *arc, position2D center)
 
 Event::~Event()
 {
+	//if (point)
+		//delete point;
 }
 
 bool Event::lessThan(const Event *a, const Event *b)

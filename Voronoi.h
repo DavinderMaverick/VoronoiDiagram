@@ -11,6 +11,13 @@ struct VoronoiOutput
 	std::vector<Edge*> edges;
 	std::vector<Vertex*> sites;
 	std::vector<Vertex*> vertices;
+	
+	void MemoryCleanUp()
+	{
+		for (auto &e : edges) { delete e; }
+		for (auto &s : sites) { delete s; }
+		for (auto &v : vertices) { delete v; }
+	}
 };
 
 class Voronoi
@@ -20,6 +27,8 @@ class Voronoi
 	BeachLineBST* beachLine;
 	EventPQ* eventPQ;
 	float maxEdgeLength;
+	
+	std::vector<Vertex*> TempVertices;
 
 public:
 	Voronoi();
