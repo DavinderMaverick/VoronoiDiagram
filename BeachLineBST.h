@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vld.h>
-
 #include "util.h"
 #include "Event.h"
 #include "EventPQ.h"
@@ -75,5 +73,3 @@ void GetLeftAndRightBreakPoints(BeachLineBSTNode* curr, BeachLineBSTNode* &leftB
 float GetArcYForXCoord(Vertex* site, float x, float directrixY);
 
 //rays == half edges == edges currently being traced out by beach line
-//https://stackoverflow.com/a/2932601
-bool CheckRayIntersection(HalfEdge &rayA, HalfEdge &rayB, position2D &pos);

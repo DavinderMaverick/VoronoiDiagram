@@ -1,13 +1,19 @@
 #pragma once
 
-#include <vld.h>
-
 #include "util.h"
 #include "BeachLineBST.h"
 #include "EventPQ.h"
 #include "Event.h"
 
 #include <vector>
+
+enum class VoronoiState
+{
+	INIT,
+	PROCESSING_EVENT_PQ,
+	COMPLETE_REMAINING_EDGES,
+	FINISHED
+};
 
 struct VoronoiOutput
 {
@@ -25,9 +31,6 @@ struct VoronoiOutput
 
 class Voronoi
 {
-	bool isInitDone;
-	
-	//float sweepLineY;
 	//std::vector<VoronoiCell*> voronoiCells;
 	EventPQ* eventPQ;
 	float maxEdgeLength;
@@ -36,10 +39,8 @@ class Voronoi
 
 public:
 
-	bool isEventQueueEmpty;
-
-	bool isFinished;
-
+	//Used when we want to see the algorithm in interactive mode
+	VoronoiState state;
 
 	BeachLineBST* beachLine;
 

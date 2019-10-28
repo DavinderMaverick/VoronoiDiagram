@@ -140,7 +140,10 @@ void BeachLineBST::InsertArc(Vertex * s, EventPQ * eventPQ)
 	CheckAndAddCircleEvent(arcLeft, eventPQ, directrixY);
 	CheckAndAddCircleEvent(arcRight, eventPQ, directrixY);
 
+
+	#ifdef DEBUG
 	print2D(directrixY);
+	#endif
 }
 
 void BeachLineBST::RemoveArc(Event * cEvent, EventPQ * eventPQ, std::vector<Edge*>& edges, std::vector<Vertex*>& vertices)
@@ -155,12 +158,18 @@ void BeachLineBST::RemoveArc(Event * cEvent, EventPQ * eventPQ, std::vector<Edge
 	BeachLineBSTNode* rightBreakPt = nullptr;
 
 	GetLeftAndRightBreakPoints(toDeleteArc, leftBreakPt, rightBreakPt);
+	
+	#ifdef DEBUG
 	assert(leftBreakPt != rightBreakPt);
+	#endif // DEBUG
 
 	BeachLineBSTNode* leftArc = GetLeftArc(toDeleteArc);
 	BeachLineBSTNode* rightArc = GetRightArc(toDeleteArc);
+	
+	#ifdef DEBUG
 	std::cout << leftArc << " " << rightArc << std::endl;
 	assert(leftArc != rightArc);
+	#endif // DEBUG
 
 	//Delete the Circle Events of the predecessor and successor arcs
 	if (leftArc && leftArc->cEvent)
@@ -279,8 +288,9 @@ void BeachLineBST::RemoveArc(Event * cEvent, EventPQ * eventPQ, std::vector<Edge
 	CheckAndAddCircleEvent(leftArc, eventPQ, directrixY);
 	CheckAndAddCircleEvent(rightArc, eventPQ, directrixY);
 
-
+	#ifdef DEBUG
 	print2D(directrixY);
+	#endif
 }
 
 bool GetParabolaRayIntersection(HalfEdge &ray, Vertex *site, float directrixY, position2D &intersectionPt)
@@ -563,7 +573,7 @@ void BeachLineBST::print2DUtil(BeachLineBSTNode * curr, int space, float directr
 	{
 		std::cout << "Arc: " << curr->site->siteID << std::endl;
 	}
-	// Process left child  
+	// Process left child 
 	print2DUtil(curr->GetLeftChild(), space, directrixY);
 }
 
@@ -580,7 +590,9 @@ BeachLineBST::~BeachLineBST()
 {
 	for (auto &v : untrackedVertices)
 	{
+		#ifdef DEBUG
 		std::cout << v->pos << std::endl;
+		#endif
 		delete v;
 	}
 }
@@ -600,7 +612,9 @@ BeachLineBSTNode* GetLeftArc(BeachLineBSTNode* curr)
 			leftArc = leftArc->GetRightChild();
 		}
 
+		#ifdef DEBUG
 		assert(leftArc->isLeaf);
+		#endif
 
 		return leftArc;
 	}
@@ -627,7 +641,9 @@ BeachLineBSTNode* GetLeftArc(BeachLineBSTNode* curr)
 		}
 	}
 
+	#ifdef DEBUG
 	assert(leftArc->isLeaf);
+	#endif
 
 	return leftArc;
 }
@@ -647,7 +663,10 @@ BeachLineBSTNode* GetRightArc(BeachLineBSTNode* curr)
 			rightArc = rightArc->GetLeftChild();
 		}
 		
+		#ifdef DEBUG
 		assert(rightArc->isLeaf);
+		#endif
+
 		return rightArc;
 	}
 
@@ -674,7 +693,9 @@ BeachLineBSTNode* GetRightArc(BeachLineBSTNode* curr)
 		}
 	}
 
+	#ifdef DEBUG
 	assert(rightArc->isLeaf);
+	#endif
 
 	return rightArc;
 }
@@ -716,6 +737,7 @@ void GetLeftAndRightBreakPoints(BeachLineBSTNode* curr, BeachLineBSTNode* &leftB
 		}
 	}
 
+	#ifdef DEBUG
 	if (leftBreakPt)
 		assert(leftBreakPt->rSite == temp->site);
 
@@ -723,6 +745,7 @@ void GetLeftAndRightBreakPoints(BeachLineBSTNode* curr, BeachLineBSTNode* &leftB
 		assert(rightBreakPt->lSite == temp->site);
 
 	assert(leftBreakPt != rightBreakPt);
+	#endif
 }
 
 float GetArcYForXCoord(Vertex* site, float x, float directrixY)

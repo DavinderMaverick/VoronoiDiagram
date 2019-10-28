@@ -37,8 +37,11 @@ void EventPQ::push(Event *event)
 	m_arr.push_back(event);
 	if(m_arr.size() > 1)
 		bubbleUp(index);
+	
+	#ifdef DEBUG
 	std::cout << "PUSH ";
 	confirmHeapProperty();
+	#endif
 }
 
 Event* EventPQ::top()
@@ -66,8 +69,11 @@ void EventPQ::pop()
 		m_arr[0]->pqIndex = 0;
 		Heapify(0);
 	}
+
+	#ifdef DEBUG
 	std::cout << "POP ";
 	confirmHeapProperty();
+	#endif
 }
 
 void EventPQ::deleteEvent(Event* event)
@@ -88,6 +94,7 @@ void EventPQ::bubbleUp(int index)
 
 void EventPQ::confirmHeapProperty()
 {
+	#ifdef DEBUG
 	std::cout << "Heap Property Check " << std::endl;
 	int index = 1;
 	if (m_arr.size() <= 1)
@@ -105,12 +112,12 @@ void EventPQ::confirmHeapProperty()
 		index++;
 	}
 	std::cout << "OK" << std::endl;
+	#endif
 }
 
 EventPQ::EventPQ()
 {
 }
-
 
 EventPQ::~EventPQ()
 {

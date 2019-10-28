@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vld.h>
-
 #include "util.h"
 
 #include <limits.h>
