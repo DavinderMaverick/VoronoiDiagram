@@ -1,6 +1,4 @@
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
+#include <vld.h>
 
 #include "Voronoi.h"
 
@@ -34,14 +32,121 @@ void DrawSite(Vertex *s)
 void DrawVertex(Vertex *v)
 {
 	float radius = 5.0f;
-	DrawCircleV(convertToScreenSpace(v->pos), radius, GREEN);
+	DrawCircleV(convertToScreenSpace(v->pos), radius, RED);
+}
+
+//Draws an arc of BST between a given Monotonic X Range
+void DrawParabola(Vertex *site, float directrixY, float minX, float maxX)
+{
+	int i_minX = (int)minX;
+	int i_maxX = (int)maxX;
+
+	int n = i_maxX - i_minX + 1;
+
+	if (n < 1)
+		return;
+
+	std::vector<position2D> curvePts(n, position2D());
+
+	float x = minX;
+	
+	for (int i = 0; i < n; i++)
+	{
+		curvePts[i] = { x, GetArcYForXCoord(site, x, directrixY) };
+
+		//curvePts[i].y = flipY(curvePts[i].y);
+
+		x += 1.0f;
+	}
+
+	for (int i = 1; i < n; i++)
+	{
+		DrawLineV(convertToScreenSpace(curvePts[i - 1]), convertToScreenSpace(curvePts[i]), RED);
+	}
+}
+
+void DrawRay(HalfEdge &ray, position2D &end)
+{
+	DrawLineV(convertToScreenSpace(ray.orig), convertToScreenSpace(end), BLACK);
+}
+
+void DrawBeachLineBST(BeachLineBSTNode *curr, float sweepLineY)
+{
+	if (!curr)
+		return;
+
+	//Arc
+	if (curr->isLeaf)
+	{
+		BeachLineBSTNode *leftBreakPt = nullptr;
+		BeachLineBSTNode *rightBreakPt = nullptr;
+		GetLeftAndRightBreakPoints(curr, leftBreakPt, rightBreakPt);
+		
+		float minX = 0;
+		float maxX = SCREEN_WIDTH;
+
+		//leftBreakPt will be cached
+		if (leftBreakPt)
+		{
+			minX = max(leftBreakPt->cachedBreakPointPos.x, minX);
+		}
+
+		//RightBreakPt pos has to be calculated
+		if (rightBreakPt)
+		{
+			position2D intersectionPtThisFrame;
+			GetParabolaRayIntersection(rightBreakPt->ray, curr->site, sweepLineY, intersectionPtThisFrame);
+			rightBreakPt->cachedBreakPointPos = intersectionPtThisFrame;
+			maxX = min(intersectionPtThisFrame.x, maxX);
+		}
+
+		DrawParabola(curr->site, sweepLineY, minX, maxX);
+		return;
+	}
+	else//Edge
+	{
+		//Inorder Traversal
+		DrawBeachLineBST(curr->GetLeftChild(), sweepLineY);
+
+		//Use cached pt
+		DrawRay(curr->ray, curr->cachedBreakPointPos);
+
+		DrawBeachLineBST(curr->GetRightChild(), sweepLineY);
+	}
+}
+
+void RenderVoronoi(VoronoiOutput &out, BeachLineBSTNode *root, float sweepLineY)
+{
+	//1: Draw Sites
+	for (int i = 0; i < out.sites.size(); ++i)
+	{
+		DrawSite(out.sites[i]);
+	}
+
+	//2 : Draw Completed Edges
+	for (int i = 0; i < out.edges.size(); ++i)
+	{
+		DrawEdge(out.edges[i]);
+	}
+
+	for (int i = 0; i < out.vertices.size(); ++i)
+	{
+		DrawVertex(out.vertices[i]);
+	}
+
+	//3: Draw BeachLine BST (Arcs, Rays under construction)
+	DrawBeachLineBST(root, sweepLineY);
 }
 
 int main(int argc, char* argv[])
 {
 	std::vector<position2D> sites;
 
-	int testCase = 32;
+	int testCase = 0;
+
+	int speedPerSec = -30.0f;//#Pixels Per Sec
+
+	float sweepLineY = SCREEN_HEIGHT - 1;
 
 	switch (testCase)
 	{
@@ -121,11 +226,8 @@ int main(int argc, char* argv[])
 		break;
 	}
 
-	Voronoi *vor = new Voronoi();
-
-	VoronoiOutput out = vor->generateVoronoi(sites, 0, SCREEN_WIDTH, 0, SCREEN_HEIGHT);
-
-	for (auto e : out.edges)
+	
+	/*for (auto e : out.edges)
 	{
 		if (e->start->pos.y == 1000.0f)
 			std::cout << "F" << std::endl;
@@ -134,7 +236,7 @@ int main(int argc, char* argv[])
 	std::cout << "# SITES "<< out.sites.size() << std::endl;
 	std::cout << "# VERTICES " << out.vertices.size() << std::endl;
 	std::cout << "# EDGES "<< out.edges.size() << std::endl;
-	
+	*/
 	
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Voronoi Output");
 
@@ -143,20 +245,42 @@ int main(int argc, char* argv[])
 	// Main game loop
 	while (!WindowShouldClose())    // Detect window close button or ESC key
 	{
-		// Update
-		//----------------------------------------------------------------------------------
-		// TODO: Update your variables here
-		//----------------------------------------------------------------------------------
 
-		// Draw
-		//----------------------------------------------------------------------------------
+		Voronoi *vor = new Voronoi();
+
+		//VoronoiOutput out;
+
+		VoronoiOutput out = vor->generateVoronoi(sites, 0, SCREEN_WIDTH, 0, SCREEN_HEIGHT);
+
 		BeginDrawing();
 
 		ClearBackground(RAYWHITE);
 
+		//Update Voronoi State
+
+		//vor->VoronoiInteractive(sites, 0, SCREEN_WIDTH, 0, SCREEN_HEIGHT, sweepLineY, out);
+
+		//Use State/ Render Voronoi State
+		//RenderVoronoi(out, vor->beachLine->root, sweepLineY);
+
+		/*if (!vor->isEventQueueEmpty)
+		{
+			sweepLineY += speedPerSec * GetFrameTime();
+		}
+
+		if (!vor->isEventQueueEmpty)
+		{
+			DrawLineV(convertToScreenSpace({ 0, sweepLineY }), convertToScreenSpace({ SCREEN_WIDTH - 1, sweepLineY }), GREEN);
+		}*/
+		
 		for (int i = 0; i < out.edges.size(); ++i)
 		{
 			DrawEdge(out.edges[i]);
+		}		
+
+		for (int i = 0; i < out.sites.size(); ++i)
+		{
+			DrawSite(out.sites[i]);
 		}
 
 		for (int i = 0; i < out.vertices.size(); ++i)
@@ -164,12 +288,12 @@ int main(int argc, char* argv[])
 			DrawVertex(out.vertices[i]);
 		}
 
-		for (int i = 0; i < out.sites.size(); ++i)
-		{
-			DrawSite(out.sites[i]);
-		}
 
 		EndDrawing();
+
+		out.MemoryCleanUp();
+		delete vor;
+
 		//----------------------------------------------------------------------------------
 	}
 
@@ -179,15 +303,8 @@ int main(int argc, char* argv[])
 	//--------------------------------------------------------------------------------------
 
 	//Clean Up Memory
-	out.MemoryCleanUp();
-	delete vor;
 
-	if (_CrtDumpMemoryLeaks()) {
-		std::cout << "Memory leaks!\n";
-	}
-	else {
-		std::cout << "No leaks\n";
-	}
+	system("pause");
 
 	return 0;
 }

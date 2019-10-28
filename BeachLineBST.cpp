@@ -5,8 +5,10 @@ BeachLineBST::BeachLineBST()
 {
 }
 
-void BeachLineBST::InsertArc(Vertex * s, EventPQ * eventPQ, float directrixY)
+void BeachLineBST::InsertArc(Vertex * s, EventPQ * eventPQ)
 {
+	float directrixY = s->pos.y;
+
 	//Inserting First Item in Tree
 	if (!root)
 	{
@@ -141,8 +143,10 @@ void BeachLineBST::InsertArc(Vertex * s, EventPQ * eventPQ, float directrixY)
 	print2D(directrixY);
 }
 
-void BeachLineBST::RemoveArc(Event * cEvent, EventPQ * eventPQ, float directrixY, std::vector<Edge*>& edges, std::vector<Vertex*>& vertices)
+void BeachLineBST::RemoveArc(Event * cEvent, EventPQ * eventPQ, std::vector<Edge*>& edges, std::vector<Vertex*>& vertices)
 {
+	float directrixY = cEvent->point->pos.y;
+
 	BeachLineBSTNode* toDeleteArc = cEvent->arc;
 
 	//Find the left and right breakpoint
@@ -279,7 +283,7 @@ void BeachLineBST::RemoveArc(Event * cEvent, EventPQ * eventPQ, float directrixY
 	print2D(directrixY);
 }
 
-bool BeachLineBST::GetParabolaRayIntersection(HalfEdge &ray, Vertex *site, float directrixY, position2D &intersectionPt)
+bool GetParabolaRayIntersection(HalfEdge &ray, Vertex *site, float directrixY, position2D &intersectionPt)
 {
 	//Input Ray is the ray from BreakPt
 	//Input arc is one of the arcs from the tuple of Breakpt
@@ -576,6 +580,7 @@ BeachLineBST::~BeachLineBST()
 {
 	for (auto &v : untrackedVertices)
 	{
+		std::cout << v->pos << std::endl;
 		delete v;
 	}
 }

@@ -1,4 +1,7 @@
 #pragma once
+
+#include <vld.h>
+
 #include "util.h"
 #include "Event.h"
 #include "EventPQ.h"
@@ -20,10 +23,8 @@ public:
 
 	BeachLineBSTNode* root;
 	BeachLineBST();
-	void InsertArc(Vertex* site, EventPQ* eventPQ, float directrixY);//On Site Event
-	void RemoveArc(Event *cEvent, EventPQ* eventPQ, float directrixY, std::vector<Edge*> &edges, std::vector<Vertex*> &vertices);//On Circle Event
-
-	bool GetParabolaRayIntersection(HalfEdge &ray, Vertex *site, float directrixY, position2D &intersectionPt);
+	void InsertArc(Vertex* site, EventPQ* eventPQ);//On Site Event
+	void RemoveArc(Event *cEvent, EventPQ* eventPQ, std::vector<Edge*> &edges, std::vector<Vertex*> &vertices);//On Circle Event
 
 	float GetXOfBreakPoint(BeachLineBSTNode* breakpoint, float directrixY);//Returns x coord of breakpoint between left and right parabolas
 	
@@ -52,6 +53,8 @@ public:
 
 	~BeachLineBST();
 };
+
+bool GetParabolaRayIntersection(HalfEdge &ray, Vertex *site, float directrixY, position2D &intersectionPt);
 
 //Useful when we need to find left and right arcs and check for circle events and also in case of deleting events
 //What is the arc immediately to the left of curr arc in the beachline sequence

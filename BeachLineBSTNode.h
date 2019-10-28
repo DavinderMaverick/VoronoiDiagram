@@ -1,4 +1,7 @@
 #pragma once
+
+#include <vld.h>
+
 #include "util.h"
 #include "Event.h"
 
@@ -14,6 +17,7 @@ class BeachLineBSTNode
 
 public:
 	bool isLeaf;
+	position2D cachedBreakPointPos;
 
 	//Leaf
 	Vertex* site;

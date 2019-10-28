@@ -1,4 +1,7 @@
 #pragma once
+
+#include <vld.h>
+
 #include "util.h"
 #include "BeachLineBST.h"
 #include "EventPQ.h"
@@ -22,19 +25,30 @@ struct VoronoiOutput
 
 class Voronoi
 {
-	float sweepLineY;
+	bool isInitDone;
+	
+	//float sweepLineY;
 	//std::vector<VoronoiCell*> voronoiCells;
-	BeachLineBST* beachLine;
 	EventPQ* eventPQ;
 	float maxEdgeLength;
 	
 	std::vector<Vertex*> TempVertices;
 
 public:
+
+	bool isEventQueueEmpty;
+
+	bool isFinished;
+
+
+	BeachLineBST* beachLine;
+
 	Voronoi();
 
 	//Site Positions and Extents of Bounding Box in Cartesian Coords
 	VoronoiOutput generateVoronoi(std::vector<position2D>& sitePositions, float minX, float maxX, float minY, float maxY);
+
+	void VoronoiInteractive(std::vector<position2D>& sitePositions, float minX, float maxX, float minY, float maxY, float sweepLineY, VoronoiOutput &out);
 
 	//Convert Remaining Rays in BeachLineBST to edges by clipping them against the BoundingRect
 	//Cleans Up BST along the way i.e. Does Inorder Traversal, deletes leaves, convertes Breakpoint Rays to Edges and deletes them as we traverse the BST

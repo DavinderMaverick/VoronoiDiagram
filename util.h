@@ -1,5 +1,8 @@
 #pragma once
 
+
+#include <vld.h>
+
 #include <math.h>
 #include <ostream>
 
@@ -116,4 +119,23 @@ inline position2D clipEdge(HalfEdge &ray, float edgeLeft, float edgeRight, float
 	float y1clip = y0 + t1 * ydelta;
 
 	return { x1clip, y1clip };
+}
+
+static float clampf(float val, float min, float max)
+{
+	if (val < min) return min;
+	if (val > max) return max;
+	return val;
+}
+
+static float max(float a, float b)
+{
+	if (a > b) return a;
+	return b;
+}
+
+static float min(float a, float b)
+{
+	if (a > b) return b;
+	return a;
 }
